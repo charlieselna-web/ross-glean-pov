@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Why Glean for Ross Stores</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0C2340;
+      --navy-light: #163557;
+      --accent: #1E6BBF;
+      --accent-soft: #E8F0FB;
+      --text: #1A1A2E;
+      --sub: #5A6478;
+      --border: #DDE3EE;
+      --white: #FFFFFF;
+      --bg: #F7F9FC;
+      --tag: #D4E4F7;
+      --tag-text: #0C4A8C;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 32px 64px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page::before {
+      content: "ROSS";
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-25deg);
+      font-size: 280px;
+      font-weight: 900;
+      color: rgba(12, 35, 64, 0.03);
+      letter-spacing: -8px;
+      pointer-events: none;
+      z-index: 0;
+      white-space: nowrap;
+    }
+
+    .page > * { position: relative; z-index: 1; }
+
+    .header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 36px;
+      padding-bottom: 24px;
+      border-bottom: 2px solid var(--navy);
+    }
+
+    .header-left { max-width: 620px; }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      font-size: 15px;
+      color: var(--sub);
+      max-width: 540px;
+      line-height: 1.55;
+    }
+
+    .header-right {
+      text-align: right;
+      min-width: 140px;
+      padding-top: 4px;
+    }
+
+    .glean-logo {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--navy);
+      letter-spacing: -0.5px;
+    }
+
+    .glean-logo span { color: var(--accent); }
+
+    .meta-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .tag {
+      background: var(--tag);
+      color: var(--tag-text);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .section { margin-bottom: 32px; }
+
+    .section-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .card.dark {
+      background: var(--navy);
+      color: var(--white);
+      border-color: var(--navy);
+    }
+
+    .card-title {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      color: var(--accent);
+    }
+
+    .card.dark .card-title { color: rgba(255,255,255,0.65); }
+
+    .card ul { list-style: none; padding: 0; }
+
+    .card ul li {
+      padding-left: 16px;
+      position: relative;
+      margin-bottom: 8px;
+      font-size: 13.5px;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .card ul li::before {
+      content: "\2192";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-size: 11px;
+      top: 2px;
+    }
+
+    .card.dark ul li { color: rgba(255,255,255,0.88); }
+    .card.dark ul li::before { color: #64A8E8; }
+
+    .three-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+    }
+
+    .why-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+    }
+
+    .why-number {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .why-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .why-body {
+      font-size: 12.5px;
+      color: var(--sub);
+      line-height: 1.55;
+    }
+
+    .domain-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+    }
+
+    .domain-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+    }
+
+    .domain-num {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .domain-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+
+    .domain-sub {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--sub);
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+
+    .domain-card ul { list-style: none; padding: 0; }
+
+    .domain-card ul li {
+      font-size: 12px;
+      color: var(--sub);
+      padding-left: 14px;
+      position: relative;
+      margin-bottom: 4px;
+      line-height: 1.45;
+    }
+
+    .domain-card ul li::before {
+      content: "\00B7";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    .domain-card ul li.impact {
+      color: var(--navy);
+      font-weight: 600;
+    }
+
+    .phases {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+    }
+
+    .phase-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      position: relative;
+    }
+
+    .phase-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      border-radius: 10px 10px 0 0;
+    }
+
+    .phase-card.p1::before { background: #93C5E8; }
+    .phase-card.p2::before { background: var(--accent); }
+    .phase-card.p3::before { background: var(--navy); }
+
+    .phase-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .phase-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .phase-body {
+      font-size: 12px;
+      color: var(--sub);
+      line-height: 1.55;
+      margin-bottom: 8px;
+    }
+
+    .kpi-row { display: flex; flex-wrap: wrap; gap: 5px; }
+
+    .kpi {
+      background: var(--accent-soft);
+      color: var(--tag-text);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 3px;
+    }
+
+    .platform-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 12px;
+    }
+
+    .plat-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .plat-icon { font-size: 20px; margin-bottom: 8px; }
+
+    .plat-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 5px;
+    }
+
+    .plat-body {
+      font-size: 11.5px;
+      color: var(--sub);
+      line-height: 1.5;
+    }
+
+    .proof-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+    }
+
+    .proof-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+    }
+
+    .proof-segment {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--sub);
+      margin-bottom: 4px;
+    }
+
+    .proof-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .proof-body {
+      font-size: 12px;
+      color: var(--sub);
+      line-height: 1.55;
+    }
+
+    .cta {
+      background: var(--navy);
+      border-radius: 12px;
+      padding: 24px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-top: 32px;
+    }
+
+    .cta-text {
+      color: rgba(255,255,255,0.88);
+      font-size: 14px;
+      line-height: 1.55;
+      max-width: 620px;
+    }
+
+    .cta-text strong {
+      color: var(--white);
+      font-size: 15px;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .cta-badge {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    hr.divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 28px 0;
+    }
+
+    @media (max-width: 700px) {
+      .two-col, .three-col, .domain-grid, .phases, .platform-grid, .proof-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <header class="header">
+    <div class="header-left">
+      <div class="eyebrow">Point of View &middot; Retail &middot; Fortune 500</div>
+      <h1>A Practical Work AI Layer<br>for Ross Stores</h1>
+      <p class="subtitle">
+        Give 108,000 employees &mdash; across stores, IT, supply chain, and operations &mdash; one permission-aware way to search, ask, and act across the systems they already use every day.
+      </p>
+      <div class="meta-tags" style="margin-top:12px;">
+        <span class="tag">Microsoft &middot; Azure &middot; SharePoint</span>
+        <span class="tag">Snowflake &middot; Jira &middot; Confluence</span>
+        <span class="tag">$21.1B Revenue</span>
+        <span class="tag">2,273 Stores</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="glean-logo">glean<span>.</span></div>
+      <div style="font-size:11px;color:var(--sub);margin-top:6px;font-weight:600;">Work AI Platform</div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="section-label">The Core Opportunity</div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">The Problem at Scale</div>
+        <ul>
+          <li>Knowledge is spread across SharePoint, Azure, Snowflake, Jira, Confluence, and operational systems &mdash; with no unified way to search across them.</li>
+          <li>Moving from question to action across IT, supply chain, stores, and finance takes longer than it should &mdash; especially on exception handling and cross-functional decisions.</li>
+          <li>2,700+ store managers and operations teams depend on tribal knowledge and manual escalation to find the right answer, the right person, or the right prior decision.</li>
+          <li>New CEO Jim Conroy is focused on operational velocity and same-store comp growth &mdash; both of which get capped when information drag compounds across 108,000 employees.</li>
+        </ul>
+      </div>
+      <div class="card dark">
+        <div class="card-title">Where Glean Fits</div>
+        <ul>
+          <li>One permission-aware AI layer across the tools Ross already operates &mdash; no rip-and-replace of Microsoft, Snowflake, or operational systems.</li>
+          <li>Search, Assistant, and Agents in a single governed platform &mdash; tuned to Ross's existing connectors and access controls.</li>
+          <li>Works alongside Microsoft Copilot as a complementary layer &mdash; deeper connectors into Jira, Confluence, Bitbucket, and operational systems M365 doesn't reach.</li>
+          <li>Deployable in days, not quarters &mdash; IT-owned, cross-functional, and designed to become a company-wide productivity initiative rather than a point solution.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section class="section">
+    <div class="section-label">Why This Matters for Ross</div>
+    <div class="three-col">
+      <div class="why-card">
+        <div class="why-number">Why 01</div>
+        <div class="why-title">Operational speed is a margin lever</div>
+        <div class="why-body">Ross's off-price model runs on buying precision and execution speed. When teams can't move quickly from question to action &mdash; across planning, SOPs, or vendor context &mdash; that creates drag on the exact workflows that determine comp growth and cost efficiency.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-number">Why 02</div>
+        <div class="why-title">IT ownership scales this company-wide</div>
+        <div class="why-body">A narrow engineering point solution doesn't move the needle. When IT owns the platform &mdash; covering service desk, project delivery, operations, and store systems &mdash; Glean becomes an enterprise initiative, not a departmental tool. That's the right play for an account at Ross's scale.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-number">Why 03</div>
+        <div class="why-title">New leadership = a window to set the standard</div>
+        <div class="why-body">With a new CEO, new Board Chair, and a mandate around operational excellence and digital capability, this is exactly when platform decisions get made. The question isn't whether Ross will deploy an enterprise AI layer &mdash; it's whether Glean gets positioned early enough to shape that conversation.</div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section class="section">
+    <div class="section-label">Where This Shows Up First</div>
+    <div class="domain-grid">
+      <div class="domain-card">
+        <div class="domain-num">01 &middot; IT &amp; Service Desk</div>
+        <div class="domain-title">Faster answers across policies, tickets, and past resolutions</div>
+        <div class="domain-sub">Challenges</div>
+        <ul>
+          <li>IT support teams resolve the same issues repeatedly with no unified knowledge base</li>
+          <li>Policies and documentation live across SharePoint, ticketing tools, and email threads</li>
+          <li>Onboarding new IT staff means weeks of tribal knowledge transfer</li>
+        </ul>
+        <div class="domain-sub">Glean Use</div>
+        <ul>
+          <li>Unified search across tickets, SharePoint docs, and past resolutions</li>
+          <li>AI-assisted deflection for repeat questions at the service desk</li>
+          <li>Agents that surface context from Jira + Confluence at the moment of need</li>
+        </ul>
+        <div class="domain-sub">Impact</div>
+        <ul>
+          <li class="impact">Shorter MTTR and fewer escalation cycles</li>
+          <li class="impact">Reduced dependency on senior IT staff for routine answers</li>
+          <li class="impact">Faster ramp for new IT hires across a complex stack</li>
+        </ul>
+      </div>
+      <div class="domain-card">
+        <div class="domain-num">02 &middot; Supply Chain &amp; Operations</div>
+        <div class="domain-title">Quicker access to SOPs, vendor context, and planning decisions</div>
+        <div class="domain-sub">Challenges</div>
+        <ul>
+          <li>Planning assumptions and cross-functional decisions live across email, SharePoint, and proprietary systems</li>
+          <li>Store managers and ops teams can't quickly find current SOPs or vendor-specific context</li>
+          <li>Demand forecasting and inventory allocation require chasing context across multiple teams</li>
+        </ul>
+        <div class="domain-sub">Glean Use</div>
+        <ul>
+          <li>Unified access to SOPs, planning docs, and vendor history across SharePoint, Snowflake summaries, and Confluence</li>
+          <li>Agents that help store operations teams find the right playbook or escalation path instantly</li>
+          <li>Cross-functional search that spans IT, supply chain, and finance simultaneously</li>
+        </ul>
+        <div class="domain-sub">Impact</div>
+        <ul>
+          <li class="impact">Faster exception handling across 2,273 stores</li>
+          <li class="impact">Reduced reliance on tribal knowledge for planning decisions</li>
+          <li class="impact">More consistent execution across store managers and ops leads</li>
+        </ul>
+      </div>
+      <div class="domain-card">
+        <div class="domain-num">03 &middot; Project Delivery &amp; Org Navigation</div>
+        <div class="domain-title">Less time hunting across Jira, Confluence, Teams, and SharePoint</div>
+        <div class="domain-sub">Challenges</div>
+        <ul>
+          <li>Project context is fragmented across Jira, Confluence, SharePoint, and Teams with no single source of truth</li>
+          <li>Finding the right internal expert or prior decision requires manual outreach and institutional memory</li>
+          <li>Cross-functional initiatives stall when teams can't quickly surface what's already been decided</li>
+        </ul>
+        <div class="domain-sub">Glean Use</div>
+        <ul>
+          <li>Connected search across Jira tickets, Confluence docs, Teams threads, and SharePoint files simultaneously</li>
+          <li>People intelligence layer to find the right internal expert based on context, not org chart</li>
+          <li>Meeting prep and project onboarding agents that surface relevant prior work instantly</li>
+        </ul>
+        <div class="domain-sub">Impact</div>
+        <ul>
+          <li class="impact">Faster project ramp for new team members and cross-functional leads</li>
+          <li class="impact">Fewer status meetings driven by information gaps</li>
+          <li class="impact">Reduced duplicate work across large, distributed project teams</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section class="section">
+    <div class="section-label">Path to Value</div>
+    <div class="phases">
+      <div class="phase-card p1">
+        <div class="phase-label">Phase 1 &middot; Land</div>
+        <div class="phase-title">IT-owned foundation</div>
+        <div class="phase-body">Start where IT owns the most surface area &mdash; service desk, project documentation, and internal knowledge. Establish Glean as the cross-tool search and assistant layer across SharePoint, Jira, Confluence, and Teams. Prove time-to-answer improvements with a focused team.</div>
+        <div class="kpi-row">
+          <span class="kpi">Ticket Deflection</span>
+          <span class="kpi">MTTR</span>
+          <span class="kpi">Search Satisfaction</span>
+        </div>
+      </div>
+      <div class="phase-card p2">
+        <div class="phase-label">Phase 2 &middot; Expand</div>
+        <div class="phase-title">Operations &amp; supply chain</div>
+        <div class="phase-body">Extend into supply chain planning, store operations, and merchandising workflows. Connect Snowflake-backed context, vendor documentation, and SOP libraries. Position Glean as the operational knowledge layer that helps the 2,700+ store managers and logistics teams move faster.</div>
+        <div class="kpi-row">
+          <span class="kpi">SOP Access Time</span>
+          <span class="kpi">Exception Resolution</span>
+          <span class="kpi">Onboarding Ramp</span>
+        </div>
+      </div>
+      <div class="phase-card p3">
+        <div class="phase-label">Phase 3 &middot; Scale</div>
+        <div class="phase-title">Company-wide initiative</div>
+        <div class="phase-body">Deploy Agents and custom workflows for high-repeat tasks across finance, HR, and cross-functional planning. Establish Glean as the standard enterprise AI platform &mdash; not a point solution &mdash; with governance, usage analytics, and exec-level visibility into adoption and ROI.</div>
+        <div class="kpi-row">
+          <span class="kpi">Hours Saved / Employee</span>
+          <span class="kpi">Agent Automation Rate</span>
+          <span class="kpi">Cross-Dept Adoption</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section class="section">
+    <div class="section-label">Why Glean Is the Right Platform</div>
+    <div class="platform-grid">
+      <div class="plat-card">
+        <div class="plat-icon">&#128279;</div>
+        <div class="plat-title">Connected Context</div>
+        <div class="plat-body">120+ connectors &mdash; including Microsoft 365, SharePoint, Snowflake, Jira, Confluence, Bitbucket, and Teams &mdash; all in one governed layer.</div>
+      </div>
+      <div class="plat-card">
+        <div class="plat-icon">&#128274;</div>
+        <div class="plat-title">Governed by Default</div>
+        <div class="plat-body">Permission-aware at the source. No data leakage across teams. Audit trails, DLP controls, and enterprise-grade security built in from day one.</div>
+      </div>
+      <div class="plat-card">
+        <div class="plat-icon">&#129302;</div>
+        <div class="plat-title">Flexible AI</div>
+        <div class="plat-body">Model-agnostic and cloud-flexible. Works alongside Microsoft Copilot rather than replacing it &mdash; Glean handles what M365 can't reach.</div>
+      </div>
+      <div class="plat-card">
+        <div class="plat-icon">&#9889;</div>
+        <div class="plat-title">Agents at Scale</div>
+        <div class="plat-body">No-code agents deployable by business owners &mdash; not just IT. Built for operational workflows, not just Q&amp;A. Deploys in days, not months.</div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section class="section">
+    <div class="section-label">Customers That Map to Ross's World</div>
+    <div class="proof-grid">
+      <div class="proof-card">
+        <div class="proof-segment">Large-Scale Retail &amp; Operations</div>
+        <div class="proof-name">Lowe's</div>
+        <div class="proof-body">One of the largest home improvement retailers in the US deployed Glean to unify knowledge across operational systems and internal documentation &mdash; helping cross-functional teams move faster on store execution and project delivery without bouncing between tools.</div>
+      </div>
+      <div class="proof-card">
+        <div class="proof-segment">Retail &middot; Microsoft-Centric Stack</div>
+        <div class="proof-name">Office Depot / ODP</div>
+        <div class="proof-body">Fragmented knowledge across M365, Salesforce, ServiceNow, Confluence, and Jira was slowing down IT, support, and merchandising teams. Glean became the enterprise knowledge layer that connected their Microsoft-centric environment to the rest of their operational stack &mdash; without replacing what was already working.</div>
+      </div>
+      <div class="proof-card">
+        <div class="proof-segment">High-Volume Operations &middot; Cross-Functional AI</div>
+        <div class="proof-name">Databricks</div>
+        <div class="proof-body">Engineering and operations teams used Glean to unify search across internal documentation and ticketing systems &mdash; cutting resolution time, improving onboarding speed, and giving cross-functional teams a single place to find answers across a complex, fast-moving information environment.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="cta">
+    <div class="cta-text">
+      <strong>What this note isn't &mdash; and what it could become</strong>
+      This isn't a pitch for another AI tool or a request to change what's working. It's a starting point to assess whether there's a broader IT or operational productivity conversation worth having &mdash; one built around Ross's Microsoft environment and a few concrete workflows across IT and operations. Happy to share a more specific version if helpful.
+    </div>
+    <div class="cta-badge">Let's talk &rarr;</div>
+  </div>
+
+</div>
+</body>
+</html>
